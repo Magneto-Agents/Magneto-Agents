@@ -71,13 +71,13 @@ const agents = [
     status: "active",
     color: "#c084fc",
     stats: [
-      { label: "Recordatorios", value: "89" },
+      { label: "Recordatorios", value: "90" },
       { label: "Tiempo promedio", value: "0.9s" },
       { label: "Próximos pasos", value: "14" },
     ],
     lastAction: "Generó recordatorio de follow-up — hace 1 min",
     logs: [
-      { time: "14:33", msg: "Recordatorio enviado: seguir oferta #3298 en 3 días", type: "ok" },
+      { time: "14:33", msg: "Recordatorio enviado: seguir oferta rgba(136, 206, 104, 0.53) en 3 días", type: "ok" },
       { time: "14:29", msg: "Próximo paso generado: preparar portafolio para entrevista", type: "info" },
       { time: "14:22", msg: "Detectó oferta sin respuesta +7 días — escaló prioridad", type: "warn" },
       { time: "14:15", msg: "Generó resumen semanal de estado de postulaciones", type: "ok" },
