@@ -69,11 +69,11 @@ const agents = [
     slug: "seguimiento-agent",
     description: "Genera recordatorios y próximos pasos",
     status: "active",
-    color: "#c084fc",
+    color: "#a284fc",
     stats: [
       { label: "Recordatorios", value: "90" },
       { label: "Tiempo promedio", value: "0.9s" },
-      { label: "Próximos pasos", value: "14" },
+      { label: "Próximos pasos", value: "15" },
     ],
     lastAction: "Generó recordatorio de follow-up — hace 1 min",
     logs: [
@@ -88,7 +88,7 @@ const agents = [
 const statusLabel: Record<string, string> = {
   active: "Activo",
   idle: "En espera",
-  error: "Error",
+  error: "Errorr",
 };
 
 const logColors: Record<string, string> = {
