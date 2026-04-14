@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const agents = [
@@ -10,6 +11,7 @@ const agents = [
     description: "Estructura CV y detecta vacíos",
     status: "active",
     color: "#4ade80",
+    href: "/dashboard/perfil",
     stats: [
       { label: "CVs procesados", value: "128" },
       { label: "Tiempo promedio", value: "2.3s" },
@@ -30,6 +32,7 @@ const agents = [
     description: "Ingesta dataset/scraper y normaliza",
     status: "active",
     color: "#60a5fa",
+    href: null,
     stats: [
       { label: "Vacantes indexadas", value: "3.4K" },
       { label: "Tiempo promedio", value: "1.8s" },
@@ -50,6 +53,7 @@ const agents = [
     description: "Simula la acción, guarda evidencia y estado",
     status: "idle",
     color: "#f59e0b",
+    href: "/dashboard/postulacion",
     stats: [
       { label: "Postulaciones", value: "405" },
       { label: "Tiempo promedio", value: "3.65s" },
@@ -70,6 +74,7 @@ const agents = [
     description: "Genera recordatorios y próximos pasos",
     status: "active",
     color: "#a284fc",
+    href: null,
     stats: [
       { label: "Recordatorios", value: "90" },
       { label: "Tiempo promedio", value: "0.9s" },
@@ -77,7 +82,7 @@ const agents = [
     ],
     lastAction: "Generó recordatorio de follow-up — hace 1 min",
     logs: [
-      { time: "14:33", msg: "Recordatorio enviado: seguir oferta rgba(136, 206, 104, 0.53) en 3 días", type: "ok" },
+      { time: "14:33", msg: "Recordatorio enviado: seguir oferta en 3 días", type: "ok" },
       { time: "14:29", msg: "Próximo paso generado: preparar portafolio para entrevista", type: "info" },
       { time: "14:22", msg: "Detectó oferta sin respuesta +7 días — escaló prioridad", type: "warn" },
       { time: "14:15", msg: "Generó resumen semanal de estado de postulaciones", type: "ok" },
@@ -88,7 +93,7 @@ const agents = [
 const statusLabel: Record<string, string> = {
   active: "Activo",
   idle: "En espera",
-  error: "Errorr",
+  error: "Error",
 };
 
 const logColors: Record<string, string> = {
@@ -274,9 +279,27 @@ export default function AgentDashboard() {
               <span style={{ fontSize: "11px", color: "#334155" }}>—</span>
               <span style={{ fontSize: "11px", color: "#475569" }}>{selectedAgent.lastAction}</span>
             </div>
-            <span style={{ fontSize: "10px", color: "#334155", letterSpacing: "0.1em" }}>
-              TRAZABILIDAD EN TIEMPO REAL
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              {selectedAgent.href && (
+                <Link
+                  href={selectedAgent.href}
+                  style={{
+                    fontSize: "11px",
+                    color: selectedAgent.color,
+                    border: `1px solid ${selectedAgent.color}40`,
+                    borderRadius: "6px",
+                    padding: "5px 12px",
+                    textDecoration: "none",
+                    backgroundColor: `${selectedAgent.color}12`,
+                  }}
+                >
+                  Abrir agente →
+                </Link>
+              )}
+              <span style={{ fontSize: "10px", color: "#334155", letterSpacing: "0.1em" }}>
+                TRAZABILIDAD EN TIEMPO REAL
+              </span>
+            </div>
           </div>
 
           {/* Logs */}
