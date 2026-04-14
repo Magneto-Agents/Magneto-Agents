@@ -1,0 +1,20 @@
+[
+  {
+    "id": "c02e6fd3-0fd9-4bbe-bcdd-e6bb93afa828",
+    "candidatoId": "a",
+    "vacanteId": "a",
+    "estadoActual": "Aceptado",
+    "fechaPostulacion": "2026-04-14T20:43:32.087Z",
+    "creadoEn": "2026-04-14T20:43:32.087Z",
+    "actualizadoEn": "2026-04-14T20:44:00.916Z"
+  },
+  {
+    "id": "ec58e222-61d6-41b6-b61b-b7e0177e9f72",
+    "candidatoId": "Candidato 01",
+    "vacanteId": "vacante 02",
+    "estadoActual": "En revisión",
+    "fechaPostulacion": "2026-04-14T20:45:17.562Z",
+    "creadoEn": "2026-04-14T20:45:17.562Z",
+    "actualizadoEn": "2026-04-14T20:45:37.565Z"
+  }
+]
