@@ -1,0 +1,70 @@
+[
+  {
+    "id": "f86fa61b-5f1b-4974-b610-dd3e62049451",
+    "postulacionId": "c02e6fd3-0fd9-4bbe-bcdd-e6bb93afa828",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "a",
+      "vacanteId": "a"
+    },
+    "fechaHora": "2026-04-14T20:43:32.091Z"
+  },
+  {
+    "id": "a2453145-79be-44b5-84aa-663f81a74166",
+    "postulacionId": "c02e6fd3-0fd9-4bbe-bcdd-e6bb93afa828",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Postulado",
+    "estadoNuevo": "En revisión",
+    "metadata": {
+      "modificadoPor": "a"
+    },
+    "fechaHora": "2026-04-14T20:43:53.612Z"
+  },
+  {
+    "id": "03398ce9-5aa4-48f8-9453-d891183ca8e8",
+    "postulacionId": "c02e6fd3-0fd9-4bbe-bcdd-e6bb93afa828",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "En revisión",
+    "estadoNuevo": "Entrevista",
+    "metadata": {
+      "modificadoPor": "a"
+    },
+    "fechaHora": "2026-04-14T20:43:56.884Z"
+  },
+  {
+    "id": "a0256913-daa3-4500-bb63-b5819149a6cd",
+    "postulacionId": "c02e6fd3-0fd9-4bbe-bcdd-e6bb93afa828",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Entrevista",
+    "estadoNuevo": "Aceptado",
+    "metadata": {
+      "modificadoPor": "a"
+    },
+    "fechaHora": "2026-04-14T20:44:00.918Z"
+  },
+  {
+    "id": "02fc70bb-d965-4e83-ae79-bf13f27ea53f",
+    "postulacionId": "ec58e222-61d6-41b6-b61b-b7e0177e9f72",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "Candidato 01",
+      "vacanteId": "vacante 02"
+    },
+    "fechaHora": "2026-04-14T20:45:17.565Z"
+  },
+  {
+    "id": "b193dc81-9bce-4b31-babc-67f652ae238b",
+    "postulacionId": "ec58e222-61d6-41b6-b61b-b7e0177e9f72",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Postulado",
+    "estadoNuevo": "En revisión",
+    "metadata": {
+      "modificadoPor": "Candidato 01"
+    },
+    "fechaHora": "2026-04-14T20:45:37.566Z"
+  }
+]
