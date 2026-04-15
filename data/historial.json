@@ -66,5 +66,28 @@
       "modificadoPor": "Candidato 01"
     },
     "fechaHora": "2026-04-14T20:45:37.566Z"
+  },
+  {
+    "id": "0d73b03c-2364-4847-8dee-a4c7c37e2a88",
+    "postulacionId": "ee7508d9-dc9f-4bac-bbb1-ceec33db9ecc",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "1",
+      "vacanteId": "e"
+    },
+    "fechaHora": "2026-04-15T13:32:08.819Z"
+  },
+  {
+    "id": "1d302716-514a-4abe-8c40-27c2b7d0cead",
+    "postulacionId": "ee7508d9-dc9f-4bac-bbb1-ceec33db9ecc",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Postulado",
+    "estadoNuevo": "En revisión",
+    "metadata": {
+      "modificadoPor": "1"
+    },
+    "fechaHora": "2026-04-15T13:32:15.011Z"
   }
 ]

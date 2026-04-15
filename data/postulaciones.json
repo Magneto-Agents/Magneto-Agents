@@ -16,5 +16,14 @@
     "fechaPostulacion": "2026-04-14T20:45:17.562Z",
     "creadoEn": "2026-04-14T20:45:17.562Z",
     "actualizadoEn": "2026-04-14T20:45:37.565Z"
+  },
+  {
+    "id": "ee7508d9-dc9f-4bac-bbb1-ceec33db9ecc",
+    "candidatoId": "1",
+    "vacanteId": "e",
+    "estadoActual": "En revisión",
+    "fechaPostulacion": "2026-04-15T13:32:08.816Z",
+    "creadoEn": "2026-04-15T13:32:08.816Z",
+    "actualizadoEn": "2026-04-15T13:32:15.009Z"
   }
 ]
