@@ -1,4 +1,5 @@
 "use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -250,7 +251,7 @@ export default function AgentDashboard() {
             borderRadius: "10px",
             overflow: "hidden",
           }}
-        >
+       >
           {/* Panel Header */}
           <div
             style={{
@@ -296,6 +297,23 @@ export default function AgentDashboard() {
                   Abrir agente →
                 </Link>
               )}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {selectedAgent.id === "perfil" ? (
+                <Link
+                  href="/dashboard/perfil"
+                  style={{
+                    fontSize: "11px",
+                    color: "#93c5fd",
+                    border: "1px solid #1d4ed8",
+                    borderRadius: "6px",
+                    padding: "6px 10px",
+                    textDecoration: "none",
+                    backgroundColor: "#0b1b3a",
+                  }}
+                >
+                  Abrir análisis CV
+                </Link>
+              ) : null}
               <span style={{ fontSize: "10px", color: "#334155", letterSpacing: "0.1em" }}>
                 TRAZABILIDAD EN TIEMPO REAL
               </span>
@@ -353,6 +371,7 @@ export default function AgentDashboard() {
               </div>
             ))}
           </div>
+        </div>
         </div>
       </main>
     </div>
