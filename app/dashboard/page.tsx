@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const agents = [
   {
-    id: "perfil",
+    id: "perfil", // slug para URL y rutas internas
     name: "Agente de Perfil",
     slug: "perfil-agent",
     description: "Estructura CV y detecta vacíos",
