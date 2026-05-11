@@ -89,5 +89,75 @@
       "modificadoPor": "1"
     },
     "fechaHora": "2026-04-15T13:32:15.011Z"
+  },
+  {
+    "id": "650cb31b-129d-4c74-a799-64793266c162",
+    "postulacionId": "663bd24e-dbb0-440a-bcae-23593e2270ad",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "ww",
+      "vacanteId": "892165"
+    },
+    "fechaHora": "2026-04-15T16:12:29.270Z"
+  },
+  {
+    "id": "2eed6376-928d-491c-875c-8b13edf530cc",
+    "postulacionId": "663bd24e-dbb0-440a-bcae-23593e2270ad",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Postulado",
+    "estadoNuevo": "En revisión",
+    "metadata": {
+      "modificadoPor": "ww"
+    },
+    "fechaHora": "2026-04-15T16:12:36.709Z"
+  },
+  {
+    "id": "739fe414-dd27-45d6-910d-d85d27a4e458",
+    "postulacionId": "e2a774a3-1799-4c03-9b18-7ebafe581b77",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "ed",
+      "vacanteId": "1233"
+    },
+    "fechaHora": "2026-04-15T17:40:27.277Z"
+  },
+  {
+    "id": "4fce8021-1c9c-4608-81f8-8b31da42f1a0",
+    "postulacionId": "e2a774a3-1799-4c03-9b18-7ebafe581b77",
+    "accion": "ESTADO_ACTUALIZADO",
+    "estadoAnterior": "Postulado",
+    "estadoNuevo": "En revisión",
+    "metadata": {
+      "modificadoPor": "ed"
+    },
+    "fechaHora": "2026-04-15T17:40:35.915Z"
+  },
+  {
+    "id": "9fb63943-5fd5-4aba-93d3-9389005160ba",
+    "postulacionId": "144966e3-170d-406c-a51c-5dfa6fe88036",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "ed22",
+      "vacanteId": "221"
+    },
+    "fechaHora": "2026-04-15T17:41:02.569Z"
+  },
+  {
+    "id": "f09bded2-7bef-4eef-8c06-151db837a2f7",
+    "postulacionId": "da05fe21-28b8-4d9b-9fa0-65bc7bf55ca5",
+    "accion": "POSTULACION_CREADA",
+    "estadoAnterior": null,
+    "estadoNuevo": "Postulado",
+    "metadata": {
+      "candidatoId": "ed22",
+      "vacanteId": "sss"
+    },
+    "fechaHora": "2026-04-15T17:41:08.656Z"
   }
 ]
