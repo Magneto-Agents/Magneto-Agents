@@ -1,12 +1,17 @@
 "use client";
-﻿"use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-const agents = [
+interface ScraperLog {
+  time: string;
+  msg: string;
+  type: "ok" | "warn" | "error" | "info";
+}
+
+const initialAgents = [
   {
-    id: "perfil", // slug para URL y rutas internas
+    id: "perfil",
     name: "Agente de Perfil",
     slug: "perfil-agent",
     description: "Estructura CV y detecta vacíos",
@@ -31,20 +36,17 @@ const agents = [
     name: "Agente de Vacantes",
     slug: "vacantes-agent",
     description: "Ingesta dataset/scraper y normaliza",
-    status: "active",
+    status: "idle",
     color: "#60a5fa",
     href: null,
     stats: [
-      { label: "Vacantes indexadas", value: "3.4K" },
-      { label: "Tiempo promedio", value: "1.8s" },
-      { label: "Fuentes activas", value: "12" },
+      { label: "Vacantes indexadas", value: "0" },
+      { label: "Tiempo promedio", value: "—" },
+      { label: "Fuentes activas", value: "1" },
     ],
-    lastAction: "Scrapeó 34 nuevas vacantes — hace 5 min",
+    lastAction: "Esperando ejecución del scraper...",
     logs: [
-      { time: "14:31", msg: "Normalizó 34 vacantes desde LinkedIn scraper", type: "ok" },
-      { time: "14:26", msg: "Detectó duplicado en oferta ID #4892 — omitida", type: "warn" },
-      { time: "14:20", msg: "Ingestó dataset de Computrabajo — 120 registros", type: "ok" },
-      { time: "14:10", msg: "Fuente Indeed no respondió — reintentando en 5 min", type: "error" },
+      { time: "--:--", msg: "Scraper listo para ejecutar. Presiona el botón para iniciar.", type: "info" },
     ],
   },
   {
@@ -94,7 +96,15 @@ const agents = [
 const statusLabel: Record<string, string> = {
   active: "Activo",
   idle: "En espera",
+  running: "Ejecutando...",
   error: "Error",
+};
+
+const statusColors: Record<string, { bg: string; text: string; border: string }> = {
+  active:  { bg: "#052e16", text: "#4ade80", border: "#166534" },
+  idle:    { bg: "#1c1400", text: "#f59e0b", border: "#854d0e" },
+  running: { bg: "#0c1a3d", text: "#60a5fa", border: "#1d4ed8" },
+  error:   { bg: "#2a0f0f", text: "#f87171", border: "#7f1d1d" },
 };
 
 const logColors: Record<string, string> = {
@@ -106,7 +116,81 @@ const logColors: Record<string, string> = {
 
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [selectedAgent, setSelectedAgent] = useState(agents[0]);
+  const [agents, setAgents] = useState(initialAgents);
+  const [selectedAgentId, setSelectedAgentId] = useState(initialAgents[0].id);
+  const [scraperRunning, setScraperRunning] = useState(false);
+  const [scraperLimit, setScraperLimit] = useState(5);
+  const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const selectedAgent = agents.find((a) => a.id === selectedAgentId) || agents[0];
+
+  // Actualiza un agente en el array
+  function updateAgent(id: string, updates: Partial<typeof agents[0]>) {
+    setAgents((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, ...updates } : a))
+    );
+  }
+
+  async function handleRunScraper() {
+    if (scraperRunning) return;
+    setScraperRunning(true);
+
+    // Cambiar estado a "running"
+    const now = new Date();
+    const ts = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
+
+    updateAgent("vacantes", {
+      status: "running",
+      lastAction: "Ejecutando scraper de Magneto365...",
+      logs: [{ time: ts, msg: `Iniciando scraper — límite: ${scraperLimit} vacantes...`, type: "info" }],
+    });
+
+    // Seleccionar el agente de vacantes
+    setSelectedAgentId("vacantes");
+
+    try {
+      const res = await fetch("/api/vacantes/scraper", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ limit: scraperLimit }),
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        const elapsed = ((Date.now() - now.getTime()) / 1000).toFixed(1);
+        updateAgent("vacantes", {
+          status: "active",
+          lastAction: `Scrapeó ${data.totalScraped} vacantes — hace un momento`,
+          stats: [
+            { label: "Vacantes indexadas", value: String(data.totalScraped) },
+            { label: "Tiempo total", value: `${elapsed}s` },
+            { label: "En sitemap", value: data.totalFound.toLocaleString() },
+          ],
+          logs: data.logs || [],
+        });
+      } else {
+        updateAgent("vacantes", {
+          status: "error",
+          lastAction: `Error: ${data.error}`,
+          logs: [
+            ...(agents.find((a) => a.id === "vacantes")?.logs || []),
+            { time: ts, msg: `Error del servidor: ${data.error}`, type: "error" },
+          ],
+        });
+      }
+    } catch (err: any) {
+      updateAgent("vacantes", {
+        status: "error",
+        lastAction: `Error de conexión: ${err.message}`,
+        logs: [
+          { time: ts, msg: `Error de red: ${err.message}`, type: "error" },
+        ],
+      });
+    } finally {
+      setScraperRunning(false);
+    }
+  }
 
   return (
     <div
@@ -190,57 +274,105 @@ export default function AgentDashboard() {
             marginBottom: "32px",
           }}
         >
-          {agents.map((agent) => (
-            <button
-              key={agent.id}
-              onClick={() => setSelectedAgent(agent)}
-              style={{
-                background: selectedAgent.id === agent.id ? "#13161f" : "#0d1018",
-                border: "none",
-                cursor: "pointer",
-                padding: "24px",
-                textAlign: "left",
-                borderLeft: selectedAgent.id === agent.id ? `3px solid ${agent.color}` : "3px solid transparent",
-                transition: "background 0.15s",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                <div>
-                  <div style={{ fontSize: "11px", color: "#475569", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "4px" }}>
-                    {agent.id}
-                  </div>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#e2e8f0" }}>{agent.name}</div>
-                </div>
-                <span
+          {agents.map((agent) => {
+            const sc = statusColors[agent.status] || statusColors.idle;
+            return (
+              <button
+                key={agent.id}
+                onClick={() => setSelectedAgentId(agent.id)}
+                style={{
+                  background: selectedAgentId === agent.id ? "#13161f" : "#0d1018",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "24px",
+                  textAlign: "left",
+                  borderLeft:
+                    selectedAgentId === agent.id
+                      ? `3px solid ${agent.color}`
+                      : "3px solid transparent",
+                  transition: "background 0.15s",
+                }}
+              >
+                <div
                   style={{
-                    fontSize: "10px",
-                    padding: "2px 8px",
-                    borderRadius: "4px",
-                    backgroundColor: agent.status === "active" ? "#052e16" : agent.status === "idle" ? "#1c1400" : "#2a0f0f",
-                    color: agent.status === "active" ? "#4ade80" : agent.status === "idle" ? "#f59e0b" : "#f87171",
-                    border: `1px solid ${agent.status === "active" ? "#166534" : agent.status === "idle" ? "#854d0e" : "#7f1d1d"}`,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "12px",
                   }}
                 >
-                  {statusLabel[agent.status]}
-                </span>
-              </div>
-
-              <div style={{ fontSize: "11px", color: "#64748b", marginBottom: "16px" }}>
-                {agent.description}
-              </div>
-
-              <div style={{ display: "flex", gap: "16px" }}>
-                {agent.stats.map((s) => (
-                  <div key={s.label}>
-                    <div style={{ fontSize: "18px", fontWeight: "700", color: agent.color, lineHeight: 1 }}>
-                      {s.value}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#475569",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      {agent.id}
                     </div>
-                    <div style={{ fontSize: "10px", color: "#475569", marginTop: "3px" }}>{s.label}</div>
+                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#e2e8f0" }}>
+                      {agent.name}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </button>
-          ))}
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      padding: "2px 8px",
+                      borderRadius: "4px",
+                      backgroundColor: sc.bg,
+                      color: sc.text,
+                      border: `1px solid ${sc.border}`,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    {agent.status === "running" && (
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          border: "2px solid #60a5fa",
+                          borderTop: "2px solid transparent",
+                          borderRadius: "50%",
+                          animation: "spin 1s linear infinite",
+                        }}
+                      />
+                    )}
+                    {statusLabel[agent.status] || agent.status}
+                  </span>
+                </div>
+
+                <div style={{ fontSize: "11px", color: "#64748b", marginBottom: "16px" }}>
+                  {agent.description}
+                </div>
+
+                <div style={{ display: "flex", gap: "16px" }}>
+                  {agent.stats.map((s) => (
+                    <div key={s.label}>
+                      <div
+                        style={{
+                          fontSize: "18px",
+                          fontWeight: "700",
+                          color: agent.color,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {s.value}
+                      </div>
+                      <div style={{ fontSize: "10px", color: "#475569", marginTop: "3px" }}>
+                        {s.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {/* Detail Panel */}
@@ -251,7 +383,7 @@ export default function AgentDashboard() {
             borderRadius: "10px",
             overflow: "hidden",
           }}
-       >
+        >
           {/* Panel Header */}
           <div
             style={{
@@ -278,9 +410,82 @@ export default function AgentDashboard() {
                 {selectedAgent.name}
               </span>
               <span style={{ fontSize: "11px", color: "#334155" }}>—</span>
-              <span style={{ fontSize: "11px", color: "#475569" }}>{selectedAgent.lastAction}</span>
+              <span style={{ fontSize: "11px", color: "#475569" }}>
+                {selectedAgent.lastAction}
+              </span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Botón Ejecutar Scraper — solo para Agente de Vacantes */}
+              {selectedAgent.id === "vacantes" && (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <label
+                    style={{ fontSize: "10px", color: "#475569" }}
+                    htmlFor="scraper-limit"
+                  >
+                    Límite:
+                  </label>
+                  <select
+                    id="scraper-limit"
+                    value={scraperLimit}
+                    onChange={(e) => setScraperLimit(Number(e.target.value))}
+                    disabled={scraperRunning}
+                    style={{
+                      fontSize: "11px",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                      border: "1px solid #1e2330",
+                      backgroundColor: "#0f1117",
+                      color: "#e2e8f0",
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {[3, 5, 10, 20, 50].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={handleRunScraper}
+                    disabled={scraperRunning}
+                    style={{
+                      fontSize: "11px",
+                      fontFamily: "inherit",
+                      color: scraperRunning ? "#475569" : "#60a5fa",
+                      border: `1px solid ${scraperRunning ? "#1e2330" : "#1d4ed8"}`,
+                      borderRadius: "6px",
+                      padding: "6px 14px",
+                      backgroundColor: scraperRunning ? "#0d1018" : "#0b1b3a",
+                      cursor: scraperRunning ? "not-allowed" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {scraperRunning ? (
+                      <>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 10,
+                            height: 10,
+                            border: "2px solid #475569",
+                            borderTop: "2px solid transparent",
+                            borderRadius: "50%",
+                            animation: "spin 1s linear infinite",
+                          }}
+                        />
+                        Scrapeando...
+                      </>
+                    ) : (
+                      <>▶ Ejecutar Scraper</>
+                    )}
+                  </button>
+                </div>
+              )}
+
               {selectedAgent.href && (
                 <Link
                   href={selectedAgent.href}
@@ -297,8 +502,8 @@ export default function AgentDashboard() {
                   Abrir agente →
                 </Link>
               )}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              {selectedAgent.id === "perfil" ? (
+
+              {selectedAgent.id === "perfil" && (
                 <Link
                   href="/dashboard/perfil"
                   style={{
@@ -313,7 +518,8 @@ export default function AgentDashboard() {
                 >
                   Abrir análisis CV
                 </Link>
-              ) : null}
+              )}
+
               <span style={{ fontSize: "10px", color: "#334155", letterSpacing: "0.1em" }}>
                 TRAZABILIDAD EN TIEMPO REAL
               </span>
@@ -321,8 +527,15 @@ export default function AgentDashboard() {
           </div>
 
           {/* Logs */}
-          <div style={{ padding: "20px 24px" }}>
-            <div style={{ fontSize: "10px", color: "#334155", letterSpacing: "0.1em", marginBottom: "12px" }}>
+          <div style={{ padding: "20px 24px", maxHeight: "360px", overflowY: "auto" }}>
+            <div
+              style={{
+                fontSize: "10px",
+                color: "#334155",
+                letterSpacing: "0.1em",
+                marginBottom: "12px",
+              }}
+            >
               ÚLTIMAS ACCIONES DEL AGENTE
             </div>
             {selectedAgent.logs.map((log, i) => (
@@ -333,23 +546,29 @@ export default function AgentDashboard() {
                   gap: "16px",
                   alignItems: "flex-start",
                   padding: "10px 0",
-                  borderBottom: i < selectedAgent.logs.length - 1 ? "1px solid #111520" : "none",
+                  borderBottom:
+                    i < selectedAgent.logs.length - 1 ? "1px solid #111520" : "none",
                 }}
               >
-                <span style={{ fontSize: "11px", color: "#334155", minWidth: "36px" }}>{log.time}</span>
+                <span style={{ fontSize: "11px", color: "#334155", minWidth: "36px" }}>
+                  {log.time}
+                </span>
                 <span
                   style={{
                     width: 6,
                     height: 6,
                     borderRadius: "50%",
-                    backgroundColor: logColors[log.type],
+                    backgroundColor: logColors[log.type] || "#94a3b8",
                     marginTop: "4px",
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontSize: "12px", color: "#94a3b8", lineHeight: "1.5" }}>{log.msg}</span>
+                <span style={{ fontSize: "12px", color: "#94a3b8", lineHeight: "1.5" }}>
+                  {log.msg}
+                </span>
               </div>
             ))}
+            <div ref={logsEndRef} />
           </div>
 
           {/* Footer stats bar */}
@@ -364,7 +583,9 @@ export default function AgentDashboard() {
           >
             {selectedAgent.stats.map((s) => (
               <div key={s.label} style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                <span style={{ fontSize: "20px", fontWeight: "700", color: selectedAgent.color }}>
+                <span
+                  style={{ fontSize: "20px", fontWeight: "700", color: selectedAgent.color }}
+                >
                   {s.value}
                 </span>
                 <span style={{ fontSize: "11px", color: "#475569" }}>{s.label}</span>
@@ -372,8 +593,16 @@ export default function AgentDashboard() {
             ))}
           </div>
         </div>
-        </div>
       </main>
+
+      {/* CSS animation for spinner */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
+

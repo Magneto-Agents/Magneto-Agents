@@ -1,13 +1,4 @@
-import { randomUUID } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
-
 import { NextResponse } from "next/server";
-
-import { extraerDatosBasicosDesdeTexto } from "@/src/agents/profile/extraer-datos-basicos";
-import { extraerTextoDeArchivoCV } from "@/src/agents/profile/parsear-cv";
-import { validarPerfil } from "@/src/agents/profile/validar-perfil";
 
 export const runtime = "nodejs";
 
@@ -23,35 +14,23 @@ export async function POST(request: Request) {
 			);
 		}
 
-		const carpetaTemporal = join(tmpdir(), "magneto-agents-profile");
-		await mkdir(carpetaTemporal, { recursive: true });
+		// Delegar el análisis al microservicio de Python
+		const pythonFormData = new FormData();
+		pythonFormData.append("cv", archivo);
 
-		const rutaTemporal = join(
-			carpetaTemporal,
-			`${randomUUID()}-${archivo.name}`.replace(/[^a-zA-Z0-9._-]/g, "_")
-		);
+		const response = await fetch("http://localhost:8000/api/perfil/analizar", {
+			method: "POST",
+			body: pythonFormData,
+		});
 
-		const bufferArchivo = Buffer.from(await archivo.arrayBuffer());
-		await writeFile(rutaTemporal, bufferArchivo);
-
-		try {
-			const textoCV = await extraerTextoDeArchivoCV(rutaTemporal);
-			const datosBasicos = extraerDatosBasicosDesdeTexto(textoCV);
-			const resultado = validarPerfil(datosBasicos, archivo.name);
-
-			return NextResponse.json({
-				ok: true,
-				archivo: {
-					nombre: archivo.name,
-					tamaño: archivo.size,
-					tipo: archivo.type,
-				},
-				textoDetectado: textoCV,
-				resultado,
-			});
-		} finally {
-			await unlink(rutaTemporal).catch(() => undefined);
+		if (!response.ok) {
+			const errorData = await response.json().catch(() => ({}));
+			throw new Error(errorData.detail || `Error en el servicio de Python: ${response.statusText}`);
 		}
+
+		const result = await response.json();
+		return NextResponse.json(result);
+
 	} catch (error) {
 		const mensaje = error instanceof Error ? error.message : "No se pudo analizar el CV.";
 		return NextResponse.json({ ok: false, error: mensaje }, { status: 500 });

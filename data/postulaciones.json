@@ -25,5 +25,41 @@
     "fechaPostulacion": "2026-04-15T13:32:08.816Z",
     "creadoEn": "2026-04-15T13:32:08.816Z",
     "actualizadoEn": "2026-04-15T13:32:15.009Z"
+  },
+  {
+    "id": "663bd24e-dbb0-440a-bcae-23593e2270ad",
+    "candidatoId": "ww",
+    "vacanteId": "892165",
+    "estadoActual": "En revisión",
+    "fechaPostulacion": "2026-04-15T16:12:29.267Z",
+    "creadoEn": "2026-04-15T16:12:29.267Z",
+    "actualizadoEn": "2026-04-15T16:12:36.707Z"
+  },
+  {
+    "id": "e2a774a3-1799-4c03-9b18-7ebafe581b77",
+    "candidatoId": "ed",
+    "vacanteId": "1233",
+    "estadoActual": "En revisión",
+    "fechaPostulacion": "2026-04-15T17:40:27.269Z",
+    "creadoEn": "2026-04-15T17:40:27.269Z",
+    "actualizadoEn": "2026-04-15T17:40:35.913Z"
+  },
+  {
+    "id": "144966e3-170d-406c-a51c-5dfa6fe88036",
+    "candidatoId": "ed22",
+    "vacanteId": "221",
+    "estadoActual": "Postulado",
+    "fechaPostulacion": "2026-04-15T17:41:02.567Z",
+    "creadoEn": "2026-04-15T17:41:02.567Z",
+    "actualizadoEn": "2026-04-15T17:41:02.567Z"
+  },
+  {
+    "id": "da05fe21-28b8-4d9b-9fa0-65bc7bf55ca5",
+    "candidatoId": "ed22",
+    "vacanteId": "sss",
+    "estadoActual": "Postulado",
+    "fechaPostulacion": "2026-04-15T17:41:08.654Z",
+    "creadoEn": "2026-04-15T17:41:08.654Z",
+    "actualizadoEn": "2026-04-15T17:41:08.654Z"
   }
 ]

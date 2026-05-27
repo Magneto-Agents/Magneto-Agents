@@ -1,3 +1,4 @@
+
 import { chromium, Page } from 'playwright';
 
 async function scrapeJobs() {
